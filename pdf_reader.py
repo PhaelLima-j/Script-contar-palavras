@@ -1,41 +1,25 @@
 from PyPDF2 import PdfReader
-import sys
-import os
 
 class PdfReaderCustom:
-
     def __init__(self, pdf):
         self.pdf = pdf
 
     def leitura_pdf(self):
-        reader = PdfReader(self.pdf)
-        page = reader.pages[0]
-
-        text = page.extract_text()
-        total_letras = []
-
-        if text:
-            for letra in text:
-                if not letra.isspace():
-                    total_letras.append(letra)
-
-        return len(total_letras)
-
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Uso: arraste um arquivo PDF ou passe o caminho como argumento.")
-        input("Pressione Enter para sair...")
-        sys.exit(1)
-
-    caminho_pdf = sys.argv[1]
-
-    if not os.path.exists(caminho_pdf):
-        print(f"Arquivo não encontrado: {caminho_pdf}")
-        input("Pressione Enter para sair...")
-        sys.exit(1)
-
-    leitor = PdfReaderCustom(caminho_pdf)
-    total = leitor.leitura_pdf()
-
-    print(f"O PDF contém {total} letras (desconsiderando espaços).")
-    input("Pressione Enter para sair...")
+        try:
+            reader = PdfReader(self.pdf)
+            total_caracteres_geral = 0
+            for numero_pagina, page in enumerate(reader.pages, 1):
+                text = page.extract_text()
+                
+                if text:
+                    caracteres_pagina = sum(1 for letra in text if not letra.isspace())
+                    total_caracteres_geral += caracteres_pagina
+                               
+            return total_caracteres_geral
+        
+        except FileNotFoundError:
+            print(f"Erro: Arquivo '{self.pdf}' não encontrado!")
+            return 0
+        except Exception as e:
+            print(f"Erro ao processar PDF: {e}")
+            return 0
