@@ -1,25 +1,27 @@
 from PyPDF2 import PdfReader
 
-class PdfReaderCustom:
-    def __init__(self, pdf):
-        self.pdf = pdf
 
-    def leitura_pdf(self):
+class PdfReaderCustom:
+    def __init__(self, pdf_file):
+        self.pdf_file = pdf_file
+
+    def read_pdf(self):
         try:
-            reader = PdfReader(self.pdf)
-            total_caracteres_geral = 0
-            for numero_pagina, page in enumerate(reader.pages, 1):
+            reader = PdfReader(self.pdf_file)
+            character_count = 0
+            for page_number, page in enumerate(reader.pages, 1):
                 text = page.extract_text()
-                
+
                 if text:
-                    caracteres_pagina = sum(1 for letra in text if not letra.isspace())
-                    total_caracteres_geral += caracteres_pagina
-                               
-            return total_caracteres_geral
-        
+                    characters_on_page = sum(1 for char in text if not char.isspace())
+                    character_count += characters_on_page
+            return character_count
+
         except FileNotFoundError:
-            print(f"Erro: Arquivo '{self.pdf}' não encontrado!")
+            print(f"Error: File '{self.pdf_file}' not found!")
             return 0
         except Exception as e:
-            print(f"Erro ao processar PDF: {e}")
+            print(f"Error while processing PDF: {e}")
             return 0
+
+
